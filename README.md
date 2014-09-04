@@ -1,7 +1,7 @@
 envWP
 =====
 
-A multi-envrionment development framework for Wordpress. Heavily inspired by Wordpress Skeleton by @markjaquith.
+A multi-envinonment development framework for Wordpress. Heavily inspired by Wordpress Skeleton by @markjaquith.
 
 ####The problem
 Although in many aspects a great CMS, Wordpress is a very messy system. There is no great way to handle multiple environements and the system is not context-aware.
@@ -35,10 +35,10 @@ This is the modded wp-config.php file that sets up the environment.
 This file should hold the database information (which is normally set up in wp-config.php) for a given environment.
 
 #### The environment
-To setup your envWP correctly you need to have an environment file. Environment files are named like {env_name}.env. That means a local environment has exactly one .env file called local.env and staging has one called stagin.env. The environement files hold key->value pairs that define some basic setup like the base url, debuggin on/off and other envrionment specific vars. The keys and their values are seperated with triple colons - like `key ::: value`. At the very least the file should contain this `base_url ::: http://mysite.com` where 'http://mysite.com' is replaced with the actual url of the environment.
+To setup your envWP correctly you need to have an environment file. Environment files are named like {env_name}.env. That means a local environment has exactly one .env file called local.env and staging has one called stagin.env. The environement files hold key->value pairs that define some basic setup like the base url, debuggin on/off and other environment specific vars. The keys and their values are seperated with triple colons - like `key ::: value`. At the very least the file should contain this `base_url ::: http://mysite.com` where 'http://mysite.com' is replaced with the actual url of the environment.
 
 ###### Properties
-* base_url      - The base URL for the envrionment (string)
+* base_url      - The base URL for the environment (string)
 * debug         - Toggle debugging (On/Off - default: Off)
 * debug_display - Toggle display errors on screen (On/Off - default: Off)
 * language      - The locale to use for this environment (string - default: en_US)
