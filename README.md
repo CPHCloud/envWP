@@ -46,7 +46,7 @@ To setup your envWP correctly you need to have an environment file. Environment 
 * table_prefix  - The table prefix to use for the database (string - default: wp_)
 
 ####Contribute
-Pull requests are welcomed :)
+Pull requests are welcome :)
 
 ####Practical
 Maintained by [@supertroels](http://www.github.com/supertroels) for [@CPHCloud](http://www.github.com/CPHCloud)
