@@ -45,6 +45,9 @@ To setup your envWP correctly you need to have an environment file. Environment 
 * auto_updates  - Toggle WP auto-updates (On/Off - default: Off)
 * table_prefix  - The table prefix to use for the database (string - default: wp_)
 
+####Contribute
+Pull requests are welcomed :)
 
 ####Practical
-This software is primarily maintained by [@supertroels](http://www.github.com/supertroels) for [@CPHCloud](http://www.github.com/CPHCloud)
+Maintained by [@supertroels](http://www.github.com/supertroels) for [@CPHCloud](http://www.github.com/CPHCloud)
+
