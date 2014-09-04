@@ -47,4 +47,4 @@ To setup your envWP correctly you need to have an environment file. Environment 
 
 
 ####Practical
-This software is primarily maintained by [@supertroels](www.github.com/supertroels) for [@CPHCloud](www.github.com/CPHCloud)
+This software is primarily maintained by [@supertroels](http://www.github.com/supertroels) for [@CPHCloud](http://www.github.com/CPHCloud)
