@@ -44,3 +44,7 @@ To setup your envWP correctly you need to have an environment file. Environment 
 * language      - The locale to use for this environment (string - default: en_US)
 * auto_updates  - Toggle WP auto-updates (On/Off - default: Off)
 * table_prefix  - The table prefix to use for the database (string - default: wp_)
+
+
+####Practical
+This software is primarily maintained by [@supertroels](www.github.com/supertroels) for [@CPHCloud](www.github.com/CPHCloud)
