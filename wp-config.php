@@ -1,25 +1,22 @@
 <?php
 
 /* This array defines the valid environments for this Wordpress installation */
-$wp_envs = array('local', 'dev', 'staging', 'production');
+$wp_envs = array('local', 'test', 'dev', 'staging', 'production');
 
 /* Here we look for a valid .env file */
-foreach($wp_envs as $env){	
-
-	$has_env 	= true;
+$has_env 	= false;
+foreach(glob("*.env") as $env){	
 	
+	$env        = trim(str_ireplace('.env', '', $env));
 	$env_file 	= dirname(__FILE__).'/'.$env.'.env';
 	$env_config = dirname(__FILE__).'/'.$env.'-config.php';
-
-	if(file_exists($env_file)){
-		break;
-	}
-
-	$has_env = false;
-	continue;
+	$has_env 	= true;
+	break;
 	
 }
 
+
+/* Parsing */
 if(!$has_env)
 	die('You need an environment file');
 
@@ -37,16 +34,26 @@ foreach($lines as $line){
 
 /* Merge the envrionement vars with the defaults */
 $env_vars = array_merge(array(
+	'base_path' 	=> dirname(__FILE__),
 	'debug' 		=> 'Off',
 	'debug_display' => 'Off',
 	'auto_updates' 	=> 'Off',
-	'table_prefix' 	=> 'wp_',
-	'language' 		=> 'en_US'
+	'table_prefix' 	=> $env.'_',
+	'language' 		=> 'en_US',
+	'content_dir' 	=> 'content'
 ), $env_vars);
+
 
 /* Check if the base_url is set */
 if(!isset($env_vars['base_url']))
 	die('You need to define the base_url setting in '.$env.'.env');
+
+
+/* Setup the constants */
+define('WP_ENV', $env);
+define('WP_BASE_URL', preg_replace('~\/$~', '', $env_vars['base_url']));
+define('WP_BASE_PATH', preg_replace('~\/$~', '', $env_vars['base_path']));
+
 
 /* Handle automatic updates */
 if(strtolower($env_vars['auto_updates']) == 'off')
@@ -69,53 +76,42 @@ else{
 	ini_set('display_errors', 0);
 }
 
-/* Setup the DB */
-define('WP_ENV', $env);
-define('WP_BASE_URL', preg_replace('~\/$~', '', $env_vars['base_url']));
+/* Include the DB config file */
 include($env_config);
 
+/* Set the custom content directory to content */
+define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/'.$env_vars['content_dir'] );
+define( 'WP_CONTENT_URL', WP_BASE_URL.'/'.$env_vars['content_dir'] );
 
-// ========================
-// Custom Content Directory
-// ========================
-define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/content' );
-define( 'WP_CONTENT_URL', WP_BASE_URL.'/content' );
-
-// ================================================
-// You almost certainly do not want to change these
-// ================================================
+/* Don't change these */
 define( 'DB_CHARSET', 'utf8' );
 define( 'DB_COLLATE', '' );
 
-// ==============================================================
-// Salts, for security
-// Grab these from: https://api.wordpress.org/secret-key/1.1/salt
-// ==============================================================
-define( 'AUTH_KEY',         'put your unique phrase here' );
-define( 'SECURE_AUTH_KEY',  'put your unique phrase here' );
-define( 'LOGGED_IN_KEY',    'put your unique phrase here' );
-define( 'NONCE_KEY',        'put your unique phrase here' );
-define( 'AUTH_SALT',        'put your unique phrase here' );
-define( 'SECURE_AUTH_SALT', 'put your unique phrase here' );
-define( 'LOGGED_IN_SALT',   'put your unique phrase here' );
-define( 'NONCE_SALT',       'put your unique phrase here' );
+/*
+This will create the salts.php file and fill it with the neccesary
+random strings used to encrypt sessions, nonces and more.
+*/
+$salts_file = WP_BASE_PATH.'/salts.php';
+if(!file_exists($salts_file)){
+	touch($salts_file);
+	$salts = file_get_contents('https://api.wordpress.org/secret-key/1.1/salt');
+	if(!$salts)
+		die('Unable to create salts.php file. Please create it manually in your base path.');
 
-// ==============================================================
-// Table prefix
-// Change this if you have multiple installs in the same database
-// ==============================================================
+	file_put_contents($salts_file, "<?php\n\n".$salts."\n?>");
+}
+require $salts_file;
+unset($salts_file);
+
+/* Set the table prefix ot that of the env var 'table_prefix' */
 $table_prefix  = $env_vars['table_prefix'];
 
-// ================================
-// Language
-// Leave blank for American English
-// ================================
+/* Set language to that of env var 'language' */
 define( 'WPLANG', $env_vars['language']);
 
-// ===================
-// Bootstrap WordPress
-// ===================
+/* We're ready. Bootstrap WordPress */
 if ( !defined( 'ABSPATH' ) )
 	define( 'ABSPATH', dirname( __FILE__ ) . '/wp/' );
 require_once( ABSPATH . 'wp-settings.php' );
+
 ?>
