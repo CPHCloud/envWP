@@ -45,6 +45,23 @@ To setup your envWP correctly you need to have an environment file. Environment 
 * auto_updates  - Toggle WP auto-updates (On/Off - default: Off)
 * table_prefix  - The table prefix to use for the database (string - default: wp_)
 
+####Things to add to .gitignore
+While you will no doubt have custom needs for your .gitignore file the following is a good starting point for any envWP site.
+
+    content/*
+    !content/mu-plugins
+    !content/plugins
+    !content/languages
+    !content/themes
+    
+    .htaccess
+    salts.php
+    *.env
+    
+If you are developing locally you would benefit from also adding your local environments config file, unless you really need to add your local DB information to the repo.
+
+    {env_name}-config.php
+
 ####Contribute
 Pull requests are welcome :)
 
