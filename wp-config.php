@@ -5,16 +5,20 @@ $wp_envs = array('local', 'test', 'dev', 'staging', 'production');
 
 /* Here we look for a valid .env file */
 $has_env 	= false;
-foreach(glob("*.env") as $env){	
+foreach(glob(dirname(__FILE__)."/*.env") as $env){	
 	
+	/* Get the envrionment name from the environment file */
+	$env 		= explode('/', $env);
+	$env  		= $env[count($env) - 1];
 	$env        = trim(str_ireplace('.env', '', $env));
+
+	/* Name a few files */
 	$env_file 	= dirname(__FILE__).'/'.$env.'.env';
 	$env_config = dirname(__FILE__).'/'.$env.'-config.php';
 	$has_env 	= true;
 	break;
 	
 }
-
 
 /* Parsing */
 if(!$has_env)
@@ -32,7 +36,7 @@ foreach($lines as $line){
 		$env_vars[strtolower($line[0])] = $line[1];
 }
 
-/* Merge the envrionement vars with the defaults */
+/* Merge the environment vars with the defaults */
 $env_vars = array_merge(array(
 	'base_path' 	=> dirname(__FILE__),
 	'debug' 		=> 'Off',
@@ -41,7 +45,7 @@ $env_vars = array_merge(array(
 	'table_prefix' 	=> $env.'_',
 	'language' 		=> 'en_US',
 	'content_dir' 	=> 'content'
-), $env_vars);
+	), $env_vars);
 
 
 /* Check if the base_url is set */
