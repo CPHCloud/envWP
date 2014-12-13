@@ -1,12 +1,11 @@
 envWP
 =====
 
-A multi-envinonment development framework for Wordpress. Heavily inspired by Wordpress Skeleton by @markjaquith.
+A multi-envinonment development environment for Wordpress. Heavily inspired by Wordpress Skeleton by @markjaquith.
 
-####The problem
-Although in many aspects a great CMS, Wordpress is a very messy system. There is no great way to handle multiple environements and the system is not context-aware.
+#### Introduction
+Although in many aspects a great CMS, Wordpress is a very messy app framework. There is no great way to handle multiple environements and the system is not context-aware.
 
-#### The solution (?)
 By bootstrapping Wordpress we are able to provide all the proper functionality for handling environments. Wordpress itself is installed in a subdirectory and can be updated without changing this functionality. This is possible via a slightly different structure than in your usual WP install.
 
 ##### The folder layout
@@ -15,9 +14,8 @@ By bootstrapping Wordpress we are able to provide all the proper functionality f
 - content
 — wp
 index.php
-{environment_name}.env
 wp-config.php
-{environment_name}-config.php
+env-config.php
 ```
 ##### "Content"-folder
 This folder is used instead of WP's own wp-content for storing plugins, themes, uploads etc.
@@ -25,17 +23,14 @@ This folder is used instead of WP's own wp-content for storing plugins, themes, 
 ##### "WP"-folder
 This is Wordpress. It's all good.
 
-##### {env_name}.env - the environment file
-THis is the single most important file in envWP. The name you give it will be the name of the current environment. So a local environment would have a file called "local.env" where a staging environment would be called "staging.env". One environment one file. The contents of this file are described further down this document.
-
 ##### wp-config.php
 This is the modded wp-config.php file that sets up the environment.
 
-##### {env_name}-config.php
-This file should hold the database information (which is normally set up in wp-config.php) for a given environment.
+##### env-config.php
+This file holds all the relevant configurations for this setup in the $env_config array.
 
 #### The environment
-To setup your envWP correctly you need to have an environment file. Environment files are named like {env_name}.env. That means a local environment has exactly one .env file called local.env and staging has one called stagin.env. The environement files hold key->value pairs that define some basic setup like the base url, debuggin on/off and other environment specific vars. The keys and their values are seperated with triple colons - like `key ::: value`. At the very least the file should contain this `base_url ::: http://mysite.com` where 'http://mysite.com' is replaced with the actual url of the environment.
+To setup your envWP correctly you need to have an environment config file.
 
 ###### Properties
 * base_url      - The base URL for the environment (string)
@@ -46,7 +41,7 @@ To setup your envWP correctly you need to have an environment file. Environment 
 * table_prefix  - The table prefix to use for the database (string - default: wp_)
 
 ####Things to add to .gitignore
-While you will no doubt have custom needs for your .gitignore file the following is a good starting point for any envWP site.
+While you will no doubt have custom needs for your .gitignore file the following is a good starting point for any envWP site. One advantage of using envWP is that you can completely leave out sensitive information from your repos.
 
     content/*
     !content/mu-plugins
@@ -56,15 +51,11 @@ While you will no doubt have custom needs for your .gitignore file the following
     
     .htaccess
     salts.php
-    *.env
-    
-If you are developing locally you would benefit from also adding your local environments config file, unless you really need to add your local DB information to the repo.
+    env-config.php
 
-    {env_name}-config.php
-
-####Contribute
+#### Contribute
 Pull requests are welcome :)
 
-####Practical
+#### Practical
 Maintained by [@supertroels](http://www.github.com/supertroels) for [@CPHCloud](http://www.github.com/CPHCloud)
 
