@@ -102,9 +102,6 @@ $table_prefix  = $env_config['table_prefix'];
 /* Set language */
 define( 'WPLANG', $env_config['language']);
 
-/* Set ACF version */
-include('acf-version.php');
-
 /* We're ready. Bootstrap WordPress */
 if ( !defined( 'ABSPATH' ) )
 	define( 'ABSPATH', dirname( __FILE__ ) . '/wp/' );
