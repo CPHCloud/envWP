@@ -1,70 +1,56 @@
 <?php
 
-/* This array defines the valid environments for this Wordpress installation */
-$wp_envs = array('local', 'test', 'dev', 'staging', 'production');
-
-/* Here we look for a valid .env file */
-$has_env 	= false;
-foreach(glob(dirname(__FILE__)."/*.env") as $env){	
-	
-	/* Get the envrionment name from the environment file */
-	$env 		= explode('/', $env);
-	$env  		= $env[count($env) - 1];
-	$env        = trim(str_ireplace('.env', '', $env));
-
-	/* Name a few files */
-	$env_file 	= dirname(__FILE__).'/'.$env.'.env';
-	$env_config = dirname(__FILE__).'/'.$env.'-config.php';
-	$has_env 	= true;
-	break;
-	
-}
+/* Here we look for a valid env-config.php file */
+$has_env 		= false;
+$env_file 	= dirname(__FILE__).'/env-config.php';
 
 /* Parsing */
-if(!$has_env)
-	die('You need an environment file');
+if(!file_exists($env_file))
+	die('Could not locate env-config.php');
 
-if(!file_exists($env_config))
-	die('You need a config file for the "'.$env.'" environment');
+/* Include the env_config.php file */
+require $env_file;
 
-/* Get the environment variables */
-$env_vars 	= array();
-$lines 		= file($env_file);
-foreach($lines as $line){
-	$line = array_map('trim', explode(':::', $line));
-	if(count($line) > 1)
-		$env_vars[strtolower($line[0])] = $line[1];
-}
+/* Make sure $env_config is set */
+if(!isset($env_config))
+	die('$env_config is not set');
 
-/* Merge the environment vars with the defaults */
-$env_vars = array_merge(array(
+/* Make sure $env_config is an array */
+if(!is_array($env_config))
+	die('$env_config should be an array of directives');
+
+if(!isset($env_config['environment']))
+	die('Please specify the "environment" setting in $env_config');
+
+/* Check if the base_url is set */
+if(!isset($env_config['base_url']))
+	die('Please specify the "base_url" setting in $env_config');
+
+
+/* Merge $env_config with the defaults */
+$env_config = array_merge(array(
 	'base_path' 	=> dirname(__FILE__),
 	'debug' 		=> 'Off',
 	'debug_display' => 'Off',
 	'auto_updates' 	=> 'Off',
-	'table_prefix' 	=> $env.'_',
+	'table_prefix' 	=> 'wp_',
 	'language' 		=> 'en_US',
 	'content_dir' 	=> 'content'
-	), $env_vars);
-
-
-/* Check if the base_url is set */
-if(!isset($env_vars['base_url']))
-	die('You need to define the base_url setting in '.$env.'.env');
+	), $env_config);
 
 
 /* Setup the constants */
-define('WP_ENV', $env);
-define('WP_BASE_URL', preg_replace('~\/$~', '', $env_vars['base_url']));
-define('WP_BASE_PATH', preg_replace('~\/$~', '', $env_vars['base_path']));
+define('WP_ENV', $env_config['environment']);
+define('WP_BASE_URL', preg_replace('~\/$~', '', $env_config['base_url']));
+define('WP_BASE_PATH', preg_replace('~\/$~', '', $env_config['base_path']));
 
 
 /* Handle automatic updates */
-if(strtolower($env_vars['auto_updates']) == 'off')
+if($env_config['auto_updates'] === false)
 	define('AUTOMATIC_UPDATER_DISABLED', true);
 
 /* Error handling */
-if(strtolower($env_vars['debug']) == 'on'){
+if($env_config['debug']){
 	define('SAVEQUERIES', true);
 	error_reporting(E_WARNING | E_ERROR);
 }
@@ -73,7 +59,7 @@ else{
 	error_reporting(0);
 }
 
-if(strtolower($env_vars['debug_display']) == 'on'){
+if($env_config['debug_display']){
 	ini_set('display_errors', 1);
 }
 else{
@@ -81,11 +67,14 @@ else{
 }
 
 /* Include the DB config file */
-include($env_config);
+define('DB_NAME', 		$env_config['db_name']);
+define('DB_USER', 		$env_config['db_user']);
+define('DB_PASSWORD', 	$env_config['db_password']);
+define('DB_HOST', 		$env_config['db_host']);
 
 /* Set the custom content directory to content */
-define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/'.$env_vars['content_dir'] );
-define( 'WP_CONTENT_URL', WP_BASE_URL.'/'.$env_vars['content_dir'] );
+define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/'.$env_config['content_dir'] );
+define( 'WP_CONTENT_URL', WP_BASE_URL.'/'.$env_config['content_dir'] );
 
 /* Don't change these */
 define( 'DB_CHARSET', 'utf8' );
@@ -107,11 +96,14 @@ if(!file_exists($salts_file)){
 require $salts_file;
 unset($salts_file);
 
-/* Set the table prefix ot that of the env var 'table_prefix' */
-$table_prefix  = $env_vars['table_prefix'];
+/* Set table prefix */
+$table_prefix  = $env_config['table_prefix'];
 
-/* Set language to that of env var 'language' */
-define( 'WPLANG', $env_vars['language']);
+/* Set language */
+define( 'WPLANG', $env_config['language']);
+
+/* Set ACF version */
+include('acf-version.php');
 
 /* We're ready. Bootstrap WordPress */
 if ( !defined( 'ABSPATH' ) )
