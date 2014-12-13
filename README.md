@@ -1,7 +1,7 @@
 envWP
 =====
 
-A multi-envinonment development environment for Wordpress. Heavily inspired by Wordpress Skeleton by @markjaquith.
+Multi-environment development for Wordpress. Heavily inspired by Wordpress Skeleton by @markjaquith.
 
 #### Introduction
 Although in many aspects a great CMS, Wordpress is a very messy app framework. There is no great way to handle multiple environements and the system is not context-aware.
